@@ -1,4 +1,4 @@
-name: Build Simple APK
+name: Build Complete APK
 
 on:
   push:
@@ -24,14 +24,12 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
       
-    - name: Use Gradle 7.6.3
+    - name: Complete Android configuration
       run: |
         cd android
-        echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.6.3-bin.zip" > gradle/wrapper/gradle-wrapper.properties
         
-    - name: Create complete build configuration
-      run: |
-        cd android
+        # Set Gradle version
+        echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.6.3-bin.zip" > gradle/wrapper/gradle-wrapper.properties
         
         # Create root build.gradle
         cat > build.gradle << 'EOF'
@@ -48,6 +46,7 @@ jobs:
             }
             dependencies {
                 classpath("com.android.tools.build:gradle:7.4.2")
+                classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
             }
         }
         
@@ -55,8 +54,35 @@ jobs:
             repositories {
                 google()
                 mavenCentral()
-                maven { url "https://www.jitpack.io" }
             }
+        }
+        EOF
+        
+        # Create app build.gradle
+        cat > app/build.gradle << 'EOF'
+        apply plugin: "com.android.application"
+        
+        android {
+            compileSdkVersion 33
+            buildToolsVersion "33.0.0"
+            
+            defaultConfig {
+                applicationId "com.timerapp"
+                minSdkVersion 21
+                targetSdkVersion 33
+                versionCode 1
+                versionName "1.0"
+            }
+            
+            buildTypes {
+                release {
+                    minifyEnabled false
+                }
+            }
+        }
+        
+        dependencies {
+            implementation "com.facebook.react:react-native:+"
         }
         EOF
         
