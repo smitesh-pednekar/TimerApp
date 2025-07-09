@@ -27,16 +27,15 @@ jobs:
         java-version: '17'
         
     - name: Install dependencies
+      run: npm install --legacy-peer-deps
+      
+    - name: Set Gradle version
       run: |
-        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+        cd android
+        echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.0.2-bin.zip" > gradle/wrapper/gradle-wrapper.properties
         
     - name: Create Android assets directory
       run: mkdir -p android/app/src/main/assets
-      
-    - name: Generate codegen artifacts
-      run: |
-        cd android
-        ./gradlew generateCodegenArtifactsFromSchema || echo "Codegen generation completed"
         
     - name: Bundle React Native JS
       run: |
@@ -50,14 +49,11 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./android/gradlew
       
-    - name: Build APK (without native modules)
+    - name: Build APK
       run: |
         cd android
         ./gradlew clean
-        ./gradlew assembleRelease \
-          -PREACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS=false \
-          --no-daemon \
-          --stacktrace
+        ./gradlew assembleRelease --no-daemon --stacktrace
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
