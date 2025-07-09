@@ -1,4 +1,4 @@
-name: Build Complete APK
+name: Build Final APK
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
       
-    - name: Complete Android configuration
+    - name: Complete Android configuration with namespace
       run: |
         cd android
         
@@ -46,7 +46,6 @@ jobs:
             }
             dependencies {
                 classpath("com.android.tools.build:gradle:7.4.2")
-                classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
             }
         }
         
@@ -58,11 +57,12 @@ jobs:
         }
         EOF
         
-        # Create app build.gradle
+        # Create app build.gradle with required namespace
         cat > app/build.gradle << 'EOF'
         apply plugin: "com.android.application"
         
         android {
+            namespace "com.timerapp"
             compileSdkVersion 33
             buildToolsVersion "33.0.0"
             
