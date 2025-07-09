@@ -1,59 +1,24 @@
-name: Build React Native APK
+name: Build APK
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Setup JDK 17
-      uses: actions/setup-java@v4
+        node-version: 18
+    - uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
+        distribution: 'zulu'
         java-version: '17'
-        
-    - name: Install dependencies
-      run: |
-        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-        
-    - name: Create Android assets directory
-      run: mkdir -p android/app/src/main/assets
-        
-    - name: Bundle React Native JS
-      run: |
-        npx react-native bundle \
-          --platform android \
-          --dev false \
-          --entry-file index.js \
-          --bundle-output android/app/src/main/assets/index.android.bundle \
-          --assets-dest android/app/src/main/res
-        
-    - name: Make gradlew executable
-      run: chmod +x ./android/gradlew
-      
-    - name: Clean and build APK
-      run: |
-        cd android
-        ./gradlew clean
-        ./gradlew assembleRelease --stacktrace --info
-        
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
+    - run: npm install
+    - run: cd android && chmod +x gradlew && ./gradlew assembleRelease
+    - uses: actions/upload-artifact@v4
       with:
-        name: TimerApp-APK
-        path: android/app/build/outputs/apk/release/*.apk
-        if-no-files-found: warn
+        name: app-release
+        path: android/app/build/outputs/apk/release/app-release.apk
