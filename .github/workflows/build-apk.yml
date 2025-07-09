@@ -1,79 +1,77 @@
-name: Build React Native APK
+name: Build Simple APK
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node 18
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
         
-    - name: Setup JDK 17
+    - name: Setup Java 17
       uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
+        distribution: 'zulu'
         java-version: '17'
         
     - name: Install dependencies
       run: npm install --legacy-peer-deps
-        
+      
     - name: Use Gradle 7.6.3
       run: |
         cd android
         echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.6.3-bin.zip" > gradle/wrapper/gradle-wrapper.properties
         
-    - name: Fix settings.gradle
+    - name: Create complete build configuration
       run: |
         cd android
-        cat > settings.gradle << 'EOF'
-        pluginManagement {
+        
+        # Create root build.gradle
+        cat > build.gradle << 'EOF'
+        buildscript {
+            ext {
+                buildToolsVersion = "33.0.0"
+                minSdkVersion = 21
+                compileSdkVersion = 33
+                targetSdkVersion = 33
+            }
             repositories {
-                gradlePluginPortal()
                 google()
                 mavenCentral()
             }
+            dependencies {
+                classpath("com.android.tools.build:gradle:7.4.2")
+            }
         }
         
-        include ':app'
-        rootProject.name = 'TimerApp'
+        allprojects {
+            repositories {
+                google()
+                mavenCentral()
+                maven { url "https://www.jitpack.io" }
+            }
+        }
         EOF
         
-    - name: Create Android assets directory
-      run: mkdir -p android/app/src/main/assets
+        # Create settings.gradle
+        echo "include ':app'" > settings.gradle
+        echo "rootProject.name = 'TimerApp'" >> settings.gradle
         
-    - name: Bundle React Native JS
-      run: |
-        npx react-native bundle \
-          --platform android \
-          --dev false \
-          --entry-file index.js \
-          --bundle-output android/app/src/main/assets/index.android.bundle \
-          --assets-dest android/app/src/main/res
-        
-    - name: Make gradlew executable
-      run: chmod +x ./android/gradlew
-      
     - name: Build APK
       run: |
         cd android
-        ./gradlew clean
-        ./gradlew assembleRelease --no-daemon --stacktrace
+        chmod +x gradlew
+        ./gradlew clean assembleRelease --no-daemon
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: TimerApp-APK
-        path: android/app/build/outputs/apk/release/*.apk
-        if-no-files-found: warn
+        name: app-release
+        path: android/app/build/outputs/apk/release/app-release.apk
