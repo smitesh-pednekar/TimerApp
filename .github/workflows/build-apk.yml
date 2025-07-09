@@ -27,13 +27,28 @@ jobs:
         java-version: '17'
         
     - name: Install dependencies
-      run: |
-        npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps
         
-    - name: Use Gradle 7.6.3 (Minimum Required)
+    - name: Use Gradle 7.6.3
       run: |
         cd android
         echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.6.3-bin.zip" > gradle/wrapper/gradle-wrapper.properties
+        
+    - name: Fix settings.gradle
+      run: |
+        cd android
+        cat > settings.gradle << 'EOF'
+        pluginManagement {
+            repositories {
+                gradlePluginPortal()
+                google()
+                mavenCentral()
+            }
+        }
+        
+        include ':app'
+        rootProject.name = 'TimerApp'
+        EOF
         
     - name: Create Android assets directory
       run: mkdir -p android/app/src/main/assets
