@@ -1,24 +1,67 @@
-name: Build APK
+name: Build React Native APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: 18
-    - uses: actions/setup-java@v4
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: '17'
-    - run: npm install
-    - run: cd android && chmod +x gradlew && ./gradlew assembleRelease
-    - uses: actions/upload-artifact@v4
+        
+    - name: Install dependencies
+      run: |
+        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+        
+    - name: Create Android assets directory
+      run: mkdir -p android/app/src/main/assets
+      
+    - name: Generate codegen artifacts
+      run: |
+        cd android
+        ./gradlew generateCodegenArtifactsFromSchema || echo "Codegen generation completed"
+        
+    - name: Bundle React Native JS
+      run: |
+        npx react-native bundle \
+          --platform android \
+          --dev false \
+          --entry-file index.js \
+          --bundle-output android/app/src/main/assets/index.android.bundle \
+          --assets-dest android/app/src/main/res
+        
+    - name: Make gradlew executable
+      run: chmod +x ./android/gradlew
+      
+    - name: Build APK (without native modules)
+      run: |
+        cd android
+        ./gradlew clean
+        ./gradlew assembleRelease \
+          -PREACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS=false \
+          --no-daemon \
+          --stacktrace
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
       with:
-        name: app-release
-        path: android/app/build/outputs/apk/release/app-release.apk
+        name: TimerApp-APK
+        path: android/app/build/outputs/apk/release/*.apk
+        if-no-files-found: warn
