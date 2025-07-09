@@ -1,4 +1,4 @@
-name: Build APK with Lint Disabled
+name: Build Simple APK
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
       
-    - name: Complete Android configuration with lint disabled
+    - name: Complete Android configuration
       run: |
         cd android
         
@@ -57,7 +57,7 @@ jobs:
         }
         EOF
         
-        # Create app build.gradle with lint disabled
+        # Create minimal app build.gradle
         cat > app/build.gradle << 'EOF'
         apply plugin: "com.android.application"
         
@@ -96,11 +96,12 @@ jobs:
         echo "include ':app'" > settings.gradle
         echo "rootProject.name = 'TimerApp'" >> settings.gradle
         
-    - name: Build APK
+    - name: Build APK with standard command
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew clean assembleRelease --no-daemon -x lintVitalRelease
+        ./gradlew clean
+        ./gradlew assembleRelease --no-daemon
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
