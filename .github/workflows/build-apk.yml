@@ -1,4 +1,4 @@
-name: Build Final APK
+name: Build Simple APK
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
       
-    - name: Complete Android configuration with namespace
+    - name: Complete Android configuration without React Native dependencies
       run: |
         cd android
         
@@ -57,7 +57,7 @@ jobs:
         }
         EOF
         
-        # Create app build.gradle with required namespace
+        # Create minimal app build.gradle
         cat > app/build.gradle << 'EOF'
         apply plugin: "com.android.application"
         
@@ -82,7 +82,8 @@ jobs:
         }
         
         dependencies {
-            implementation "com.facebook.react:react-native:+"
+            implementation "androidx.core:core-ktx:1.9.0"
+            implementation "androidx.appcompat:appcompat:1.6.1"
         }
         EOF
         
