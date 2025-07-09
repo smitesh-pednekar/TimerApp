@@ -1,97 +1,178 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ⏱️ Multi-Timer React Native App
 
-# Getting Started
+> ⚡ **Your personal productivity booster — manage multiple timers effortlessly and stay on top of your tasks.**
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 🚀 Overview
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+A beautifully designed, feature-rich **multi-timer application** built with **React Native**, helping users manage multiple countdown timers grouped by categories. Enjoy real-time progress visualization, category-based control, and a clutter-free experience.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
-npm start
+## ✨ Features
 
-# OR using Yarn
-yarn start
+### 🔑 Core Functionality
+- ⏰ **Create Custom Timers** — Set timer name, duration, and category
+- 🗂️ **Category Grouping** — Organize timers into collapsible sections
+- 🎛️ **Control Timers** — Start, pause, reset individual timers
+- 📊 **Progress Visualization** — See real-time progress with sleek progress bars
+- 🚀 **Bulk Controls** — Start, pause, or reset all timers in a category
+- 🎉 **Completion Alerts** — Beautiful modals notify you when a timer finishes
+
+### 🌟 Enhanced Capabilities
+- 🕘 **Timer History** — See a timeline of completed timers
+- 🔔 **Halfway Notifications** — Optional 50% completion alerts
+- 💾 **Persistent Data** — Auto-save timers with AsyncStorage
+- 🎨 **Material Design Inspired UI** — Clean and intuitive design
+
+---
+
+## 🔧 Installation & Setup
+
+### ✅ Prerequisites
+- Node.js v14+
+- React Native CLI
+- Android Studio (for Android) / Xcode (for iOS)
+
+---
+
+### 📦 Quick Start
+
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd TimerApp
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **iOS Only: Install Pods**
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+4. **Run the App**
+
+   - **Android**
+     ```bash
+     npx react-native run-android
+     ```
+
+   - **iOS**
+     ```bash
+     npx react-native run-ios
+     ```
+
+---
+
+## 🏗️ Project Structure
+
+```
+TimerApp/
+├── android/                 # Android-specific configs
+├── ios/                     # iOS-specific configs
+├── src/                     # App source code
+│   ├── components/          # Reusable UI components
+│   ├── screens/             # Screen components
+│   ├── utils/               # Utility functions
+│   ├── context/             # Global state management
+│   └── styles/              # Centralized styles
+├── App.js
+├── package.json
+├── index.js                 # App entry point
+└── README.md
 ```
 
-## Step 2: Build and run your app
+---
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## ⚙️ Technical Overview
 
-### Android
+### 🔑 State Management
+- **React Context API + useReducer** for global timer state
+- Efficient management of timers, history, and intervals
 
-```sh
-# Using npm
-npm run android
+### 💾 Persistence
+- **AsyncStorage** for storing timers and history across sessions
 
-# OR using Yarn
-yarn android
-```
+### ⏳ Timer Logic
+- Built with JavaScript `setInterval` & clear interval handling for optimized performance
 
-### iOS
+### 🔀 Navigation
+- **React Navigation** (Stack + Bottom Tabs)
+- Smooth navigation flow between screens
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 🔍 Assumptions & Constraints
 
-```sh
-bundle install
-```
+- ⏱️ Max timer duration: **99:59:59**
+- 🏷️ Category names: **Max 30 chars, case-sensitive**
+- 📝 Timer names: **Max 50 chars**
+- ☁️ No cloud sync (local storage only)
+- 🔔 Halfway alerts as console logs (upgradeable to push notifications)
+- 📂 History export in JSON format
+- 🌕 Light theme by default (Dark Mode as a future add-on)
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+## 📚 Dependencies
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### ⚙️ Core Libraries
+| Package                                       | Purpose                        |
+|-----------------------------------------------|--------------------------------|
+| `react-native`                                | Mobile app framework           |
+| `@react-navigation/native`                    | Navigation core                |
+| `@react-navigation/stack`                     | Stack navigation               |
+| `@react-navigation/bottom-tabs`               | Tabbed navigation              |
+| `@react-native-async-storage/async-storage`   | Local storage                  |
+| `react-native-vector-icons`                   | Icon support                   |
+| `react-native-screens`                        | Performance optimization       |
+| `react-native-safe-area-context`              | Safe area handling             |
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
+## 🌱 Future Roadmap
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 🚨 Short-Term
+- 🔔 Push notifications for timer events
+- 🎵 Add sound alerts
+- 🌑 Dark Mode UI toggle
+- 🎛️ Custom themes
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### ☁️ Mid-Term
+- ☁️ Cloud sync & backup
+- 🧩 Timer templates for quick reuse
 
-## Step 3: Modify your app
+### 📊 Long-Term
+- 📈 Usage analytics for timer patterns
+- 🤖 Smart timer suggestions based on user behavior
 
-Now that you have successfully run the app, let's make changes!
+---
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 🤝 Contributing
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+🎯 We welcome contributions!
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+1. Fork the repository
+2. Create your branch (`git checkout -b feature/awesome-feature`)
+3. Commit your changes (`git commit -m 'Add an awesome feature'`)
+4. Push to your branch (`git push origin feature/awesome-feature`)
+5. Create a Pull Request
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## 📜 License
 
-### Now what?
+Licensed under the **MIT License**.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+---
 
-# Troubleshooting
+<div align="center">
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Made with ❤️ by Smitesh
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+</div>
